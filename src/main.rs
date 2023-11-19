@@ -1,3 +1,5 @@
+use game::Game;
+mod game;
 fn main() {
-    println!("Hello, world!");
+    let g = Game::new(None);
 }
