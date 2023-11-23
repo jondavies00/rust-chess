@@ -10,6 +10,8 @@ use pieces::{Piece, Colour, create_pawn, create_bishop, create_king, create_knig
 
 type Square = Option<pieces::Piece>;
 
+// impl Eq for Square {}
+
 // impl Display for Square {
 //     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
 //         match Self {
@@ -80,6 +82,13 @@ impl Board {
         }
         display_string
     }
+
+    pub fn get_piece_at(&self, x: &u8, y: &u8) -> &Option<Piece>{
+        return &self.positions[*x as usize][*y as usize];
+
+    }
+
+    
 
 }
 

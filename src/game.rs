@@ -1,12 +1,14 @@
 #[path = "board.rs"] mod board;
 #[path = "pieces.rs"] mod pieces;
 #[path = "errors.rs"] mod errors;
-use std::{fmt::Error, num::ParseIntError, convert, char::ParseCharError};
+#[path = "move_piece.rs"] mod move_piece;
 
-use board::{Board};
+use std::{fmt::Error, num::ParseIntError, convert, char::ParseCharError, io};
+
+use board::Board;
 use pieces::{Colour};
 
-use crate::game::errors::FormatMoveError;
+use move_piece::{Move};
 
 
 fn create_game() {
@@ -23,50 +25,8 @@ pub struct Game {
     game_config: GameConfig
 }
 
-pub struct Move {
-    pub x: u8,
-    pub y: u8
-}
 
-pub const FILES: [char;8] = ['a','b','c','d','e','f','g','h'];
 
-impl Move {
-
-    
-
-    pub fn from_string_coord(coord: String) -> Result<Move, errors::FormatMoveError> {
-        let file = coord[0..1].parse::<char>();
-        let rank = coord[1..2].parse::<u8>();
-        
-
-        println!("{}", String::from("Vars"));
-
-        match rank {
-            Ok(rank) => {
-                println!("Rank: {}", rank);
-    
-                match file {
-                    Ok(file) => {
-
-                        println!("{}", String::from("Vars")); 
-                        let file_pos = FILES.iter().position(|r| *r == file);
-                        match file_pos {
-                            Some(file_pos) => {
-                                return Ok(Move {x: file_pos as u8, y: rank});
-                            },
-                            None => {
-                                return Err(FormatMoveError);
-                            }
-                        }},
-                    Err(file) => {println!("{}", String::from("Invalid File!"));return Err(FormatMoveError)}
-                }
-            
-            },
-            Err(rank) => {println!("{}", String::from("Invalid rank!")); return Err(FormatMoveError)}
-            
-        }
-    }
-}
 
 // Public interface for interacting with a game configuration
 impl Game {
@@ -77,11 +37,63 @@ impl Game {
         }
     }
 
-    // pub fn move(&self, coord1: String, coord2: String) -> GameConfig{
+     
+    pub fn begin(&self)  {
+        loop {
+            println!("{}", &self.game_config.board.display_string());
+            println!("{}", String::from("Please input a move: "));
+            let mut input = String::new();
+            match io::stdin().read_line(&mut input) {
+                Ok(n) => {
+                    let current_move = Move::from_string_coord(input);
+                    match current_move {
+                        Ok(current_move) => {
+                            println!("{}", String::from(format!("Your move: from {},{} to {}, {}", current_move.x1, current_move.y1,current_move.x2,current_move.x2)));
+                            register_move(&self.game_config.board, current_move);
+                        }
+                        Err(error) => {
+                            println!("{}", String::from("Invalid move! Please try again..."));
+                            continue;
+                        }
+                    }
+                    
+                }
+                Err(error) => println!("error: {error}"),
+            }
+        }
 
-    // }
+    }
 
     // pub fn translate_move(coord: String) -> Move {
 
     // }
+}
+
+pub fn register_move(board: &Board, move_: Move) {
+
+    // Find the piece at source  position return error if not
+    let source_piece = board.get_piece_at(&move_.x1, &move_.y1);
+
+    match source_piece {
+        Some(piece) => {
+            println!("{}", String::from("PIECE AT SOURCE COORD"));
+            let target_piece = board.get_piece_at(&move_.x2, &move_.y2);
+            match target_piece {
+                Some(piece) => {
+                    println!("{}", String::from("PIECE AT TARGET COORD"));
+        
+        
+                }
+                None => {
+                    println!("{}", String::from("NO PIECE AT TARGET COORD"));
+                }
+            }
+
+
+        }
+        None => {
+            println!("{}", String::from("NO PIECE AT SOURCE COORD"));
+        }
+    }
+
 }
