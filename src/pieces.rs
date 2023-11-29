@@ -11,8 +11,8 @@ pub struct Piece{
     name: String,
     symbols: [char; 2],
     colour: Colour,
-    move_set: Vec<Vec<i32>>,
-    valid_moves: Option<Vec<Vec<i32>>>
+    pub move_set: Vec<Vec<u8>>,
+    valid_moves: Option<Vec<Vec<u8>>>
 }
 
 pub fn create_pawn(colour: Colour) -> Piece {

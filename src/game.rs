@@ -10,6 +10,8 @@ use pieces::{Colour};
 
 use move_piece::{Move};
 
+use self::pieces::Piece;
+
 
 fn create_game() {
     let b = Board::new();
@@ -49,8 +51,9 @@ impl Game {
                     match current_move {
                         Ok(current_move) => {
                             println!("{}", String::from(format!("Your move: from {},{} to {}, {}", current_move.x1, current_move.y1,current_move.x2,current_move.x2)));
- 
+                            
                             make_move(&mut self.game_config.board, &current_move);
+                            
                         }
                         Err(error) => {
                             println!("{}", String::from("Invalid move! Please try again..."));
@@ -117,7 +120,15 @@ pub fn make_move( board: &mut Board, move_: &Move) {
                 }
                 None => {
                     println!("{}", String::from("NO PIECE AT TARGET COORD"));
-                    board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
+                    if (validate_move_for_piece(&move_, &piece.move_set)) {
+                        println!("{}", String::from("Moving piece!"));
+                        board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
+
+                    }
+                    else {
+                        println!("{}", String::from("Not valid move"));
+                    }
+                    
                     
                 }
             }
@@ -128,5 +139,14 @@ pub fn make_move( board: &mut Board, move_: &Move) {
             println!("{}", String::from("NO PIECE AT SOURCE COORD"));
         }
     }
+    
+}
+
+pub fn validate_move_for_piece(move_: &Move, move_set: &Vec<Vec<u8>>) -> bool{
+    let y_distance = move_.x2 - move_.x1;
+    let x_distance = move_.y2 - move_.y1;
+    println!("{}", String::from(format!("x dist: {}, y_dist: {}", x_distance, y_distance)));
+    let new_move = vec!(x_distance, y_distance);
+    return move_set.contains(&new_move);
     
 }
