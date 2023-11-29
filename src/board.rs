@@ -88,6 +88,23 @@ impl Board {
 
     }
 
+    pub fn move_piece_to(&mut self, old_x: &u8, old_y: &u8, new_x: &u8, new_y: &u8) {
+        // Take a mutable reference copy of the piece to move
+        // Once cloned, we no longer have the mutable reference
+        let piece_to_move = &mut self.positions[*old_x as usize][*old_y as usize].clone();
+        self.positions[*old_x as usize][*old_y as usize] = None;
+        match piece_to_move {
+            Some(piece) => {
+                self.positions[*new_x as usize][*new_y as usize] = Some(piece.clone());
+            }
+            None => {
+                return;
+            }
+        }
+
+    }
+
+
     
 
 }

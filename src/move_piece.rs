@@ -4,7 +4,7 @@ use board::Board;
 use errors::FormatMoveError;
 
 pub const FILES: [char;8] = ['a','b','c','d','e','f','g','h'];
-
+#[derive(Clone)]
 pub struct Move {
     pub x1: u8,
     pub y1: u8,

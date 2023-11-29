@@ -38,7 +38,7 @@ impl Game {
     }
 
      
-    pub fn begin(&self)  {
+    pub fn begin(&mut self)  {
         loop {
             println!("{}", &self.game_config.board.display_string());
             println!("{}", String::from("Please input a move: "));
@@ -49,7 +49,8 @@ impl Game {
                     match current_move {
                         Ok(current_move) => {
                             println!("{}", String::from(format!("Your move: from {},{} to {}, {}", current_move.x1, current_move.y1,current_move.x2,current_move.x2)));
-                            register_move(&self.game_config.board, current_move);
+ 
+                            make_move(&mut self.game_config.board, &current_move);
                         }
                         Err(error) => {
                             println!("{}", String::from("Invalid move! Please try again..."));
@@ -69,8 +70,37 @@ impl Game {
     // }
 }
 
-pub fn register_move(board: &Board, move_: Move) {
+// pub fn register_move(board: &Board, move_: &Move) {
 
+//     // Find the piece at source  position return error if not
+//     let source_piece = board.get_piece_at(&move_.x1, &move_.y1);
+
+//     match source_piece {
+//         Some(piece) => {
+//             println!("{}", String::from("PIECE AT SOURCE COORD"));
+//             let target_piece = board.get_piece_at(&move_.x2, &move_.y2);
+//             match target_piece {
+//                 Some(piece) => {
+//                     println!("{}", String::from("PIECE AT TARGET COORD"));
+        
+        
+//                 }
+//                 None => {
+//                     println!("{}", String::from("NO PIECE AT TARGET COORD"));
+                    
+//                 }
+//             }
+
+
+//         }
+//         None => {
+//             println!("{}", String::from("NO PIECE AT SOURCE COORD"));
+//         }
+//     }
+
+// }
+
+pub fn make_move( board: &mut Board, move_: &Move) {
     // Find the piece at source  position return error if not
     let source_piece = board.get_piece_at(&move_.x1, &move_.y1);
 
@@ -81,11 +111,14 @@ pub fn register_move(board: &Board, move_: Move) {
             match target_piece {
                 Some(piece) => {
                     println!("{}", String::from("PIECE AT TARGET COORD"));
+                    
         
         
                 }
                 None => {
                     println!("{}", String::from("NO PIECE AT TARGET COORD"));
+                    board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
+                    
                 }
             }
 
@@ -95,5 +128,5 @@ pub fn register_move(board: &Board, move_: Move) {
             println!("{}", String::from("NO PIECE AT SOURCE COORD"));
         }
     }
-
+    
 }

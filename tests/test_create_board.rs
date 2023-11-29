@@ -16,7 +16,7 @@ use chess::move_piece::Move;
 
 #[test]
 fn test_game() {
-    let game: Game = Game::new(None);
+    let game:  &mut Game =  &mut Game::new(None);
     game.begin();}
 
 
