@@ -63,7 +63,7 @@ impl Move {
             Ok(from) => {
                 match to {
                     Ok(to) => {
-                        return Ok(Move {x1: from.1, y1 : from.0, x2: to.1, y2: to.0})
+                        return Ok(Move {x1: from.0, y1 : from.1, x2: to.0, y2: to.1})
                     }
                     Err(e) => {
                         return Err(e);

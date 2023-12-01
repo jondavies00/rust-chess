@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter, Result};
 
-use super::Board;
+
+
+#[derive(PartialEq)]
 #[derive(Clone)]
 pub enum Colour {
     White,
@@ -10,7 +12,7 @@ pub enum Colour {
 pub struct Piece{
     name: String,
     symbols: [char; 2],
-    colour: Colour,
+    pub colour: Colour,
     pub move_set: Vec<Vec<u8>>,
     valid_moves: Option<Vec<Vec<u8>>>
 }
@@ -40,9 +42,6 @@ pub fn create_queen(colour: Colour) -> Piece {
 }
 
 
-pub fn get_valid_moves_for_piece(board: Board, piece: Piece){
-
-}
 
 
 // impl Piece{
@@ -54,12 +53,21 @@ pub fn get_valid_moves_for_piece(board: Board, piece: Piece){
 impl Display for Piece {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         match self.colour {
-            Colour::White => write!(f, "{}", self.symbols[0]),
-            Colour::Black => write!(f, "{}", self.symbols[1])
+            Colour::White => write!(f, "{}", self.symbols[1]),
+            Colour::Black => write!(f, "{}", self.symbols[0])
         }
         
     }
 }
 
+impl Display for Colour {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        match self {
+            Colour::White => write!(f, "white"),
+            Colour::Black => write!(f, "black")
+        }
+        
+    }
+}
 
 

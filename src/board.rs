@@ -1,14 +1,14 @@
 use std::fmt::{Display, Formatter, Result};
-#[path = "pieces.rs"] mod pieces;
 
-use pieces::{Piece, Colour, create_pawn, create_bishop, create_king, create_knight, create_rook, create_queen};
+
+use crate::pieces::{Piece, Colour, create_pawn, create_bishop, create_king, create_knight, create_rook, create_queen};
 
 // pub enum Position {
 //     Piece,
 //     None
 // }
 
-type Square = Option<pieces::Piece>;
+type Square = Option<Piece>;
 
 // impl Eq for Square {}
 
@@ -32,14 +32,14 @@ impl Board {
 
         Board {
             positions: [
-                Board::gen_home_row(Colour::Black).clone(),
-                Board::gen_pawn_row(Colour::Black).clone(),
-                BASE_ROW.clone(),
-                BASE_ROW.clone(),
-                BASE_ROW.clone(),
-                BASE_ROW.clone(),
+                Board::gen_home_row(Colour::White).clone(),
                 Board::gen_pawn_row(Colour::White).clone(),
-                Board::gen_home_row(Colour::White).clone()
+                BASE_ROW.clone(),
+                BASE_ROW.clone(),
+                BASE_ROW.clone(),
+                BASE_ROW.clone(),
+                Board::gen_pawn_row(Colour::Black).clone(),
+                Board::gen_home_row(Colour::Black).clone()
             ]
         }
     }
@@ -84,18 +84,19 @@ impl Board {
     }
 
     pub fn get_piece_at(&self, x: &u8, y: &u8) -> &Option<Piece>{
-        return &self.positions[*x as usize][*y as usize];
+        return &self.positions[*y as usize][*x as usize];
 
     }
 
     pub fn move_piece_to(&mut self, old_x: &u8, old_y: &u8, new_x: &u8, new_y: &u8) {
         // Take a mutable reference copy of the piece to move
         // Once cloned, we no longer have the mutable reference
-        let piece_to_move = &mut self.positions[*old_x as usize][*old_y as usize].clone();
-        self.positions[*old_x as usize][*old_y as usize] = None;
+        let piece_to_move = &mut self.positions[*old_y as usize][*old_x as usize].clone();
+        self.positions[*old_y as usize][*old_x as usize] = None;
         match piece_to_move {
             Some(piece) => {
-                self.positions[*new_x as usize][*new_y as usize] = Some(piece.clone());
+                println!("{}", String::from(format!("new y: {}, new x: {}", new_y, new_x)));
+                self.positions[*new_y as usize][*new_x as usize] = Some(piece.clone());
             }
             None => {
                 return;
