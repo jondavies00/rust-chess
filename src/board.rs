@@ -23,7 +23,7 @@ type Square = Option<Piece>;
 // Representation of a board is done via a vector of Pieces
 
 pub struct Board {
-    positions: [[Square;8];8],
+    pub positions: [[Square;8];8],
 }
 const BASE_ROW : [Square;8] = [None, None, None, None, None, None, None, None];
 impl Board {

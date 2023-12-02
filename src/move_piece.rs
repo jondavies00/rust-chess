@@ -15,19 +15,14 @@ pub struct Move {
 pub fn format_coordinate(coord:String) -> Result<(u8, u8),FormatMoveError>  {
     let file = coord[0..1].parse::<char>();
     let rank = coord[1..2].parse::<u8>();
-    
 
-    println!("{}", String::from("Vars"));
 
     match rank {
         Ok(rank) => {
-            println!("Rank: {}", rank);
             let rank = rank -1;
 
             match file {
                 Ok(file) => {
-
-                    println!("{}", String::from("Vars")); 
                     let file_pos = FILES.iter().position(|r| *r == file);
                     match file_pos {
                         Some(file_pos) => {
