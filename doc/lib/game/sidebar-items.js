@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["make_move",""],["validate_move_for_piece",""]],"struct":[["Game",""],["GameConfig",""]]};

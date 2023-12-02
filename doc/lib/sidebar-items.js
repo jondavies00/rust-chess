@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["board",""],["errors",""],["game",""],["move_piece",""],["pieces",""]]};

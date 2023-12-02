@@ -139,7 +139,7 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
 
 pub fn validate_move_for_piece(move_: &Move, move_set: &Vec<Vec<u8>>) -> bool{
     println!("{}", String::from(format!("move x1: {}, x2: {} y1: {}, y2: {}", move_.x1, move_.x2, move_.y1, move_.y2)));
-    // TODO: dist can be negative
+    // TODO: make moveset a range e.g. [0,2] means any x within 0 and y within 2
     let x_distance = move_.x2 as i8 - move_.x1 as i8;
     let y_distance = move_.y2 as i8 - move_.y1 as i8;
     println!("{}", String::from(format!("x dist: {}, y_dist: {}", x_distance, y_distance)));
