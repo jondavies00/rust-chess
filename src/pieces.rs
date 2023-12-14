@@ -12,6 +12,7 @@ pub struct Piece {
     symbols: [char; 2],
     pub colour: Colour,
     pub unit_moves: Vec<Vec<i8>>,
+    pub capture_moves: Option<Vec<Vec<i8>>>,
     pub multiplier: bool,
     valid_moves: Option<Vec<Vec<u8>>>,
 }
@@ -25,6 +26,7 @@ pub fn create_pawn(colour: Colour) -> Piece {
         colour: colour,
         //move_set: vec![vec![0, 1], vec![0, 2]],
         unit_moves: vec![vec![0,1], vec![0,2]],
+        capture_moves: Some(vec![vec![1, 1], vec![-1, 1]]),
         multiplier: false,
         valid_moves: None,
     }
@@ -35,23 +37,8 @@ pub fn create_rook(colour: Colour) -> Piece {
         name: String::from("Rook"),
         symbols: ['♖', '♜'],
         colour: colour,
-        //move_set: vec![
-        //     vec![0, 1],
-        //     vec![0, 2],
-        //     vec![0, 3],
-        //     vec![0, 4],
-        //     vec![0, 5],
-        //     vec![0, 6],
-        //     vec![0, 7],
-        //     vec![1, 0],
-        //     vec![2, 0],
-        //     vec![3, 0],
-        //     vec![4, 0],
-        //     vec![5, 0],
-        //     vec![6, 0],
-        //     vec![7, 0],
-        // ],
         unit_moves: vec![vec![0,1], vec![0,-1],vec![1,0], vec![-1,0]],
+        capture_moves: None,
         multiplier: true,
         valid_moves: None,
     }
@@ -64,6 +51,7 @@ pub fn create_bishop(colour: Colour) -> Piece {
         colour: colour,
         //move_set: vec![vec![0, 1], vec![0, 2]],
         unit_moves: vec![vec![1,1], vec![1,-1],vec![1,-1], vec![-1,-1]],
+        capture_moves: None,
         multiplier: true,
         valid_moves: None,
     }
@@ -76,6 +64,7 @@ pub fn create_knight(colour: Colour) -> Piece {
         colour: colour,
         //move_set: vec![vec![0, 1], vec![0, 2]],
         unit_moves: vec![vec![1,2], vec![1,-2],vec![-1,2], vec![-1,-2], vec![2,1],vec![2,-1],vec![-2,1],vec![-2,-1]],
+        capture_moves: Some(vec![vec![1,2], vec![1,-2],vec![-1,2], vec![-1,-2], vec![2,1],vec![2,-1],vec![-2,1],vec![-2,-1]]),
         multiplier: false,
         valid_moves: None,
     }
@@ -87,6 +76,7 @@ pub fn create_king(colour: Colour) -> Piece {
         symbols: ['♔', '♚'],
         colour: colour,
         unit_moves: vec![vec![0, 1], vec![0, -1],vec![1, 0],vec![-1, 0],vec![1, 1],vec![1, -1],vec![-1, 1],vec![-1, -1]],
+        capture_moves: None,
         multiplier: false,
         valid_moves: None,
     }
@@ -99,6 +89,7 @@ pub fn create_queen(colour: Colour) -> Piece {
         colour: colour,
         //move_set: vec![vec![0, 1], vec![0, 2]],
         unit_moves: vec![vec![0,1], vec![0,-1],vec![1,0], vec![-1,0], vec![1,1], vec![1,-1],vec![1,-1], vec![-1,-1]],
+        capture_moves: None,
         multiplier: true,
         valid_moves: None,
     }

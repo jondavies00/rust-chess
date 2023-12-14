@@ -1,7 +1,4 @@
-#[path = "errors.rs"] mod errors;
-#[path = "board.rs"] mod board;
-use board::Board;
-use errors::FormatMoveError;
+use crate::errors::FormatMoveError;
 
 pub const FILES: [char;8] = ['a','b','c','d','e','f','g','h'];
 #[derive(Clone)]
@@ -43,9 +40,6 @@ pub fn format_coordinate(coord:String) -> Result<(u8, u8),FormatMoveError>  {
 }
 
 impl Move {
-
-    
-
     pub fn from_string_coord(coord: String) -> Result<Move, FormatMoveError> {
         let coords = coord.split(" ").collect::<Vec<_>>();
         // for c in coords {

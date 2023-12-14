@@ -12,7 +12,7 @@ use chess::move_piece::Move;
 //     let 
 //     println!("{}", Board::gen_home_row(Colour::Black).clone());
 //     let first_rank = board.
-// }
+// }d
 
 #[test]
 fn test_game() {
