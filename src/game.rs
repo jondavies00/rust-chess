@@ -101,10 +101,10 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
     let source_piece = board.get_piece_at(&move_.x1, &move_.y1);
 
     match source_piece {
-        Some(piece) => {
-            if (&piece.colour != turn_colour) {
+        Some(source_piece) => {
+            if (&source_piece.colour != turn_colour) {
                 println!("{}", String::from("Source piece is not of correct colour."));
-                println!("{}", String::from(format!("{} != {}", &piece.colour, turn_colour)));
+                println!("{}", String::from(format!("{} != {}", &source_piece.colour, turn_colour)));
                 return Err(InvalidMoveError);
             }
             println!("{}", String::from("PIECE AT SOURCE COORD"));
@@ -115,23 +115,29 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
                 Some(target_piece) => {
 
                     if (&target_piece.colour == turn_colour){
+                        if (&target_piece.name == "King" && &source_piece.name == "Rook" && board.) {
+                            println!("{}", String::from("Checking if we can castle..."))
+                            validate_castle();
+                        }
                         println!("{}", String::from("Piece of same colour at target"));
                         return Err(InvalidMoveError);
                     }
 
-                    if validate_move(&move_, board, piece, true) {
+                    if validate_move(&move_, board, source_piece, true) {
                         println!("{}", String::from("Capturing piece"));
                         board.update_captured(target_piece.clone());
                         board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
+                        board.update_castlable(source_piece);
                         return Ok(());
                     }
                 }
                 None => {
-                    if validate_move(&move_, board, piece, false) {
+                    if validate_move(&move_, board, source_piece, false) {
                         println!("{}", String::from("NO PIECE AT TARGET COORD"));
 
                         println!("{}", String::from("Moving piece!"));
                         board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
+                        board.update_castlable(source_piece);
                         return Ok(());
                     }
 
@@ -152,6 +158,14 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
         }
     }
     
+}
+
+pub fn validate_castle(move_: &Move, board: &Board) {
+    """
+    Castle is valid if move is valid, no pieces exist between the rook and the king, 
+    and no piece blocks the movement
+    """
+    ...
 }
 
 pub fn get_unit_move(new_move: &Vec<i8>, unit_moves: &Vec<Vec<i8>>) -> Option< Vec<i8>>  {
@@ -223,51 +237,7 @@ pub fn validate_move(move_: &Move, board: &Board, source_piece: &Piece, capture:
 
 
 }
-
-// pub fn valid_capture(move_: &Move, board: &Board, source_piece: &Piece, capture: bool) -> bool{
-//     let x_distance = move_.x2 as i8 - move_.x1 as i8;
-//     let y_distance = move_.y2 as i8 - move_.y1 as i8;
-
-//     let mut new_move = vec!(x_distance, y_distance);
-
-//     // Only piece that can't go backwards.
-//     // Probably a better way to handle
-//     if source_piece.name == "Pawn" && source_piece.colour == Colour::Black {
-//         new_move[0] *= -1;
-//         new_move[1] *= -1;
-//     }
-
-//     match &source_piece.capture_moves {
-//         Some(capture_moves) => {
-//             if capture_moves.contains(&new_move) {
-//                 return true;
-        
-//             }
-//         }
-//         None => {
-//             if source_piece.unit_moves.contains(&new_move) {
-//                 return true;
-        
-//             }
-//         }
-
-//     }
     
-//     if source_piece.multiplier {
-//         match(get_unit_move(&new_move, &source_piece.unit_moves)) {
-//             Some(unit_move) => {
-//                 return is_blocking_piece(move_, &unit_move, board);
-//             }
-//             None => {return false;}
-
-//         }
-
-//     }
-//     println!("{}", String::from(format!("No multipler and unit moves do not contain new move {},{}", new_move[0], new_move[1])));
-//     return false;
-// }
-    
-
 pub fn is_blocking_piece(move_: &Move, unit_move: &Vec<i8>, board: &Board) -> bool {
     // Use the board to find if there's a piece between the piece's source move and target square
     // Generate all squares the piece needs to pass through

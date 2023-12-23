@@ -25,9 +25,11 @@ type Square = Option<Piece>;
 pub struct Board {
     pub positions: [[Square;8];8],
     pub white_captured: Vec<Piece>, // Probably nice to know what has been captured in the future
-    pub black_captured: Vec<Piece>
+    pub black_captured: Vec<Piece>,
+    pub white_can_castle: bool,
+    pub black_can_castle: bool 
 }
-const BASE_ROW : [Square;8] = [None, None, None, None, None, None, None, None];
+pub const BASE_ROW : [Square;8] = [None, None, None, None, None, None, None, None];
 impl Board {
     
     pub fn new() -> Board {
@@ -44,7 +46,9 @@ impl Board {
                 Board::gen_home_row(Colour::Black).clone()
             ],
             white_captured: vec![],
-            black_captured: vec![]
+            black_captured: vec![],
+            white_can_castle: true,
+            black_can_castle: true,
         }
     }
 
@@ -125,6 +129,19 @@ impl Board {
             }
         }
 
+    }
+
+    pub fn update_castlable(&mut self, moved_piece: &Piece) {
+        if  moved_piece.name == "King" || moved_piece.name == "Rook" {
+            match moved_piece.colour {
+                Colour::White => {
+                    self.white_can_castle = false
+                }
+                Colour::Black => {
+                    self.black_can_castle = false
+                }
+            }
+        }
     }
 
     

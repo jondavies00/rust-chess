@@ -7,5 +7,6 @@ mod board;
 mod move_piece;
 mod errors;
 fn main() {
-    let g = Game::new(None);
+    let mut g = Game::new(None);
+    g.begin();
 }

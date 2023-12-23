@@ -50,7 +50,7 @@ pub fn create_bishop(colour: Colour) -> Piece {
         symbols: ['♗', '♝'],
         colour: colour,
         //move_set: vec![vec![0, 1], vec![0, 2]],
-        unit_moves: vec![vec![1,1], vec![1,-1],vec![1,-1], vec![-1,-1]],
+        unit_moves: vec![vec![1,1], vec![1,-1],vec![-1,1], vec![-1,-1]],
         capture_moves: None,
         multiplier: true,
         valid_moves: None,
