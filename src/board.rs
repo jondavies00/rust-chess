@@ -144,6 +144,38 @@ impl Board {
         }
     }
 
+    pub fn can_castle(&self, colour: &Colour, rook_x: u8, king_x:u8) -> bool {
+        let rank: i8;
+        match colour {
+            Colour::White => {
+                if !self.white_can_castle{
+                    return false;
+                }
+                rank = 0;
+            }
+            Colour::Black => {
+                if !self.black_can_castle{
+                    return false;
+                }
+                rank = 8;
+            }
+        }
+        // Check if there is a clear line between rook and king, and neither of these pieces have moved yet
+        let mut x_range: i8 = 0;
+        x_range = (rook_x as i8 - king_x as i8).abs();
+
+        for i in 1..x_range -1 {
+            let square = &self.positions[i as usize][rank as usize];
+            match square {
+                Some(piece) => {
+                    return false;
+                }
+                None => {}
+            }
+        }
+        return true;
+    }
+
     
 
 }

@@ -115,9 +115,9 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
                 Some(target_piece) => {
 
                     if (&target_piece.colour == turn_colour){
-                        if (&target_piece.name == "King" && &source_piece.name == "Rook" && board.) {
+                        if (&target_piece.name == "King" && &source_piece.name == "Rook" ) {
                             println!("{}", String::from("Checking if we can castle..."))
-                            validate_castle();
+
                         }
                         println!("{}", String::from("Piece of same colour at target"));
                         return Err(InvalidMoveError);
@@ -160,13 +160,6 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
     
 }
 
-pub fn validate_castle(move_: &Move, board: &Board) {
-    """
-    Castle is valid if move is valid, no pieces exist between the rook and the king, 
-    and no piece blocks the movement
-    """
-    ...
-}
 
 pub fn get_unit_move(new_move: &Vec<i8>, unit_moves: &Vec<Vec<i8>>) -> Option< Vec<i8>>  {
 
