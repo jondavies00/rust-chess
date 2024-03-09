@@ -40,7 +40,7 @@ impl Game {
     }
 
      
-    pub fn begin(&mut self)  {
+    pub fn begin_cli(&mut self)  {
         // Main game loop
         loop {
             println!("{}", &self.game_config.board.display_string());
@@ -81,23 +81,59 @@ impl Game {
                 
             }
             
-            match self.game_config.turn {
-                Colour::White => {
-                    self.game_config.turn = Colour::Black
-                }
-                Colour::Black => {
-                    self.game_config.turn = Colour::White
-                }
-            }
+            self.switch_turn();
             
         }
 
+    }
+
+    pub fn register_move(&mut self, move_: Move) -> Result<(), InvalidMoveError> {
+        match (make_move(&mut self.game_config.board, &move_, &self.game_config.turn)) {
+            Ok(()) => {
+                self.switch_turn();
+                return  Ok(())
+            }
+            Err(error) => {
+                println!("{}", error);
+                return Err(error);
+            }
+        }
+    }
+
+    pub fn get_board(&self) -> String{
+        return self.game_config.board.display_string()
+    }
+
+    pub fn can_castle(&self, colour: Colour) -> bool {
+        match colour {
+            Colour::White => {self.game_config.board.white_can_castle}
+            Colour::Black => {self.game_config.board.black_can_castle}
+        }
+    }
+
+    pub fn switch_turn(&mut self) {
+        match self.game_config.turn {
+            Colour::White => {
+                self.game_config.turn = Colour::Black
+            }
+            Colour::Black => {
+                self.game_config.turn = Colour::White
+            }
+        }
     }
 }
 
 
 pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Result<(), InvalidMoveError> {
     // Find the piece at source  position return error if not
+    // let we_can_castle: bool = board.can_castle(turn_colour, &move_.x1, &move_.x2);
+    // board.update_can_castle();
+    // let mut format_string = String::from("No");
+    // if we_can_castle{
+    //     format_string = String::from("Yes");
+    // }
+    // println!("{}", String::from(format!("Can castle: {}", format_string)));
+
     let source_piece = board.get_piece_at(&move_.x1, &move_.y1);
 
     match source_piece {
@@ -113,21 +149,30 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
             
             match target_piece {
                 Some(target_piece) => {
-
+                    
                     if (&target_piece.colour == turn_colour){
-                        if (&target_piece.name == "King" && &source_piece.name == "Rook" ) {
-                            println!("{}", String::from("Checking if we can castle..."))
+                        if (&source_piece.name == "King" && &target_piece.name == "Rook") {
+                            println!("{}", String::from("Checking if we can castle..."));
+                            if board.can_castle(turn_colour, &move_.x2, &move_.x1) {
+                                board.castle(&move_.x1, &move_.y1, &move_.x2, &move_.y2, turn_colour);
+                                
+                                println!("{}", String::from("Castled!"));
+                            }
+                            
 
                         }
                         println!("{}", String::from("Piece of same colour at target"));
                         return Err(InvalidMoveError);
                     }
+                    
 
                     if validate_move(&move_, board, source_piece, true) {
                         println!("{}", String::from("Capturing piece"));
-                        board.update_captured(target_piece.clone());
+                        board.update_castleable(&move_.x1,& move_.y1);
+                        board.update_captured(&move_.x2, &move_.y2);
                         board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
-                        board.update_castlable(source_piece);
+                        
+                        
                         return Ok(());
                     }
                 }
@@ -136,8 +181,9 @@ pub fn make_move( board: &mut Board, move_: &Move, turn_colour: &Colour) -> Resu
                         println!("{}", String::from("NO PIECE AT TARGET COORD"));
 
                         println!("{}", String::from("Moving piece!"));
+                        board.update_castleable(&move_.x1,& move_.y1);
                         board.move_piece_to(&move_.x1, &move_.y1, &move_.x2, &move_.y2);
-                        board.update_castlable(source_piece);
+                        
                         return Ok(());
                     }
 
@@ -185,7 +231,6 @@ pub fn validate_move(move_: &Move, board: &Board, source_piece: &Piece, capture:
     // Only piece that can't go backwards.
     // Probably a better way to handle
     if source_piece.name == "Pawn" && source_piece.colour == Colour::Black {
-        println!("{}", String::from("inversing move"));
         new_move[0] *= -1;
         new_move[1] *= -1;
     }

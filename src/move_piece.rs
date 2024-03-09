@@ -76,6 +76,10 @@ impl Move {
         
 
     }
+
+    pub fn from_int_coord(x1: u8, x2: u8, y1:u8, y2: u8) -> Move{
+        return Move{x1: x1, y1: y1, x2: x2, y2: y2};
+    }
 }
 
 

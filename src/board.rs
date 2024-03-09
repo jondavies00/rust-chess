@@ -1,4 +1,4 @@
-use std::fmt::{Display, Formatter, Result};
+use std::{fmt::{Display, Formatter, Result}, ops::Range};
 
 
 use crate::pieces::{Piece, Colour, create_pawn, create_bishop, create_king, create_knight, create_rook, create_queen};
@@ -106,45 +106,61 @@ impl Board {
             Some(piece) => {
                 println!("{}", String::from(format!("new y: {}, new x: {}", new_y, new_x)));
                 self.positions[*new_y as usize][*new_x as usize] = Some(piece.clone());
-                drop(piece);
-                drop(piece_to_move);
             }
             None => {
-                drop(piece_to_move);
-                return;
+
             }
         }
 
     }
 
-    pub fn update_captured(&mut self, piece: Piece) {
-        match (piece.colour) {
-            Colour::White => {
-                self.white_captured.push( piece.clone());
-                return;
-            }
-            Colour::Black => {
-                self.black_captured.push(piece.clone());
-                return;
-            }
-        }
-
-    }
-
-    pub fn update_castlable(&mut self, moved_piece: &Piece) {
-        if  moved_piece.name == "King" || moved_piece.name == "Rook" {
-            match moved_piece.colour {
-                Colour::White => {
-                    self.white_can_castle = false
-                }
-                Colour::Black => {
-                    self.black_can_castle = false
+    pub fn update_captured(&mut self, move_x: &u8, move_y: &u8) {
+        let piece = &self.positions[*move_y as usize][*move_x as usize];
+        match (piece) {
+            Some(piece) => {
+                 match (piece.colour) {
+                    Colour::White => {
+                        self.white_captured.push( piece.clone());
+                    }
+                    Colour::Black => {
+                        self.black_captured.push(piece.clone());
+                    }
                 }
             }
+            None => {}
+        }
+
+    }
+
+    pub fn update_castleable(&mut self, move_x: &u8, move_y: &u8) {
+        
+        let piece = &self.positions[*move_y as usize][*move_x as usize];
+        match (piece){
+            Some(piece) => {
+            if  piece.name == "King" || piece.name == "Rook" {
+                match piece.colour {
+                    Colour::White => {
+                        self.white_can_castle = false;
+                        return;
+                    }
+                    Colour::Black => {
+                        self.black_can_castle = false;
+                        return;
+                    }
+                }
+            }}
+            None => {}
         }
     }
 
-    pub fn can_castle(&self, colour: &Colour, rook_x: u8, king_x:u8) -> bool {
+    // pub fn is_valid_castle(&self, move_x1: &u8, move_x2: &u8, colour: Colour) {
+    //     // We know king + rook of same colour are selected
+    //     // Calculate if its king/queen side and return true if they are valid
+    //     if move_x == 0
+
+    // }
+
+    pub fn can_castle(&self, colour: &Colour, rook_x: &u8, king_x:&u8) -> bool {
         let rank: i8;
         match colour {
             Colour::White => {
@@ -160,14 +176,21 @@ impl Board {
                 rank = 8;
             }
         }
+        println!("{}", String::from("Checking in between"));
         // Check if there is a clear line between rook and king, and neither of these pieces have moved yet
-        let mut x_range: i8 = 0;
-        x_range = (rook_x as i8 - king_x as i8).abs();
+        let range: Range<u8>;
 
-        for i in 1..x_range -1 {
-            let square = &self.positions[i as usize][rank as usize];
+        if rook_x > king_x {
+            range = king_x + 1..rook_x - 1;
+        }
+        else {
+            range = rook_x + 1..king_x - 1;
+        }
+        for i in range {
+            let square: &Option<Piece> = &self.positions[rank as usize][i as usize];
+            println!("{}", String::from(format!("Checking square coords at {}, {}", i, rank)));
             match square {
-                Some(piece) => {
+                Some(_piece) => {
                     return false;
                 }
                 None => {}
@@ -175,6 +198,78 @@ impl Board {
         }
         return true;
     }
+
+    // pub fn update_can_castle(&mut self) {
+    //     let check_tuple = vec![((0, 4), (0, 7), Colour::White), ((0, 4), (0, 0), Colour::White), ((7, 4), (7, 7), Colour::Black), ((0, 4), (7, 0), Colour::Black)];
+
+    //     // Match any piece is None
+    //     for c in check_tuple {
+    //         let y = c.0.0 as usize;
+    //         let x = c.0.1 as usize;
+    //         let piece = &self.positions[y][x];
+    //         match piece {
+    //             Some(_piece) => {}
+    //             None => {continue;}
+    //         }
+    //         match c.2 {
+    //             Colour::White => {
+    //                 self.white_can_castle = self.can_castle(&c.2, &c.1.1, &c.0.1);
+    //             }
+    //             Colour::Black => {self.black_can_castle = self.can_castle(&c.2, &c.1.1, &c.0.1);}
+    //         }
+            
+    //     }
+    // }
+
+    pub fn castle(&mut self, king_x: &u8, king_y: &u8, rook_x: &u8, rook_y: &u8, colour: &Colour){
+        // Check if its a kingside or queenside castle
+        let king = self.positions[*king_y as usize][*king_x as usize].clone();
+        let rook = self.positions[*rook_y as usize][*rook_x as usize].clone();
+        // let king_y = *king_y as usize;
+        // let king_x = *king_x as usize;
+        // let rook_y = *rook_y as usize;
+        // let rook_x = *rook_x as usize;
+        match king {
+            Some(king) => {
+                match rook {
+                    Some(rook) => {
+                        match rook_x {
+                            7 => {
+                                // Kingside: king to 6, rook to 5
+                                self.positions[*king_y as usize][*king_x as usize] = None;
+                                self.positions[*king_y as usize][6] = Some(king);
+                                
+                                self.positions[*rook_y as usize][*rook_x as usize] = None;
+                                self.positions[*rook_y as usize][5] = Some(rook);
+                            }
+                            4 => {
+                                //Queenside: king to 3, rook to 4
+                                self.positions[*king_y as usize][*king_x as usize] = None;
+                                self.positions[*king_y as usize][3] = Some(king);
+                
+                                self.positions[*rook_y as usize][*rook_x as usize] = None;
+                                self.positions[*rook_y as usize][4] = Some(rook);
+                            }
+                            _ => {}
+                        }
+
+                    }
+                    None => {}
+                }
+            }
+            None => {}
+        }
+
+        match colour {
+            Colour::White => {
+                self.white_can_castle = false;
+            }
+            Colour::Black => {
+                self.black_can_castle = false;
+            }
+        }
+        
+    }   
 
     
 

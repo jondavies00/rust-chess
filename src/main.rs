@@ -8,5 +8,5 @@ mod move_piece;
 mod errors;
 fn main() {
     let mut g = Game::new(None);
-    g.begin();
+    g.begin_cli();
 }
