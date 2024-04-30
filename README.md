@@ -1,3 +1,3 @@
-# chess
+# Rust Chess
 
-Chess CLI implementation in rust
+A Chess CLI implementation in Rust
